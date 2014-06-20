@@ -62,7 +62,10 @@ class crm_meeting(osv.osv):
             return event_id
 
         instance_pool = self.pool.get('google.api.calendar')
-        instance = instance_pool.search(cr, uid, [('user_id', '=', uid)])
+        instance = False
+        # launchpad bug #1297881: added this 'if' because user_id is not a required field
+        if vals.get('user_id', False):
+            instance = instance_pool.search(cr, uid, [('user_id', '=', vals['user_id'])])
         if not instance:
             event_id = super(crm_meeting, self).create(cr, uid, vals, context)
             return event_id
